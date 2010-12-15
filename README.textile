@@ -1,0 +1,98 @@
+h1. BBPush
+
+"http://github.com/nbrochu/bbpush":http://github.com/nbrochu/bbpush
+
+h2. Summary
+
+A simple server-side Blackberry push notification client that works with BIS applications.
+
+h2. Description
+
+BBPush is a simple server-side Blackberry push notification client that works with any BIS applications, regardless of it is in development or in production. All you need to use it are the Blackberry PINS of the devices you want to reach and a few configuration properties that you can get from the BB app developer. The library makes it trivial to send push notifications, be it for one PIN, multiple PINs or even all devices that have your app installed. Save yourself the headaches and frustrations of dealing with RIM. Install BBPush! ;)
+
+Note that it only supports the BB Push Essentials service type (the free tier) at the moment since I have never needed to upgrade to Plus for any app (even some pretty large ones!). Feel free to fork and add support for the Plus service type if you feel like it. I'll gladly accept your pull request!
+
+h2. Installation
+
+<pre>
+gem install bbpush
+</pre>
+
+h2. How to use
+
+*Require the library (and RubyGems if needed).*
+<pre>
+require 'rubygems'
+require 'bbpush'
+</pre>
+
+*Initialize the Blackberry Push Client*
+
+* "app_id" is the App ID listed in your Push Initiator configuration properties.
+* "password" is the Password listed in your Push Initiator configuration properties.
+* "push_server_url" is the Base URL listed in your Push Initiator configuration properties, followed by "/mss/PD_pushRequest". Defaults to "https://pushapi.eval.blackberry.com/mss/PD_pushRequest" if nothing is provided.
+
+You can find these properties along with your credentials for the Content Provider Admin Portal (usually in an email).
+<pre>
+@bbpc = BBPush::Client.new(:app_id=>"yourappidhere",
+                           :password=>"yourpasswordhere", 
+                           :push_server_url=>"https://cp123.pushapi.na.blackberry.com/mss/PD_pushRequest")
+</pre>
+
+*Send push notifications*
+
+* First parameter is an array of one or multiple device PINs as strings. It can also be an array containing only "push_all".
+* Second parameter is a string containing the plain text message you would like to send to the device(s).
+* Third parameter is an integer is the maximum number of minutes the notifications should be delivered within (5 is a good value!).
+<pre>
+@bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)
+@bbpc.send_notification(["12345678", "23456789", "34567890"], "Hello to 3 different devices!", 5)
+@bbpc.send_notification(["push_all"], "Hello to all devices with the app installed!", 5)
+</pre>
+
+That's it! As long as your Blackberry client-side app is programmed to properly handle push notifications, the device(s) will receive it! If you would like to take a look at the PAP response provided by the Blackberry servers you can assign "BBPush::Client.send_notification" to a variable and the response will be stored like so:
+
+<pre>
+response = @bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)
+</pre>
+
+If you then inspect "response" you should see a PAP response similar to this:
+<pre>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE pap PUBLIC &quot;-//WAPFORUM//DTD PAP 2.1//EN&quot; &quot;http://www.openmobilealliance.org/tech/DTD/pap_2.1.dtd&quot;&gt;
+&lt;pap&gt;
+	&lt;push-response push-id=&quot;2237803423&quot; sender-address=&quot;http://cp123.pushapi.na.blackberry.com/mss/PD_pushRequest&quot; sender-name=&quot;RIM Push-Data Service&quot; reply-time=&quot;2010-12-14T21:32:46Z&quot;&gt;
+		&lt;response-result code=&quot;1001&quot; desc=&quot;The request has been accepted for processing.&quot;&gt;&lt;/response-result&gt;
+	&lt;/push-response&gt;
+&lt;/pap&gt;
+</pre>
+
+Getting a 1001 Response Result Code indicates that everything is working perfectly on the server-side. If you still don't get the notifications, the problem resides on your client-side app!
+
+h2. Credits
+
+* Kudos to the guy on the BB Developer Forums that did the packet sniffing to figure out how it all works at the protocol level so we can keep our web apps and APIs lightweight and free of RIM code.
+* Nega-Kudos to RIM for having the absolute worst documentation in the industry. Having to download an entire IDE (no Mac version available!) for a few bloated samples of Java code is plain retarded and doesn't count as documentation.
+
+h2. LICENSE
+
+Copyright (c) 2010 - Nicholas Brochu
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
