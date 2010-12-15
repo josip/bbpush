@@ -14,17 +14,13 @@ Note that it only supports the BB Push Essentials service type (the free tier) a
 
 h2. Installation
 
-<pre>
-gem install bbpush
-</pre>
+<pre>gem install bbpush</pre>
 
 h2. How to use
 
 *Require the library (and RubyGems if needed).*
-<pre>
-require 'rubygems'
-require 'bbpush'
-</pre>
+<pre>require 'rubygems'
+require 'bbpush'</pre>
 
 *Initialize the Blackberry Push Client*
 
@@ -33,39 +29,31 @@ require 'bbpush'
 * "push_server_url" is the Base URL listed in your Push Initiator configuration properties, followed by "/mss/PD_pushRequest". Defaults to "https://pushapi.eval.blackberry.com/mss/PD_pushRequest" if nothing is provided.
 
 You can find these properties along with your credentials for the Content Provider Admin Portal (usually in an email).
-<pre>
-@bbpc = BBPush::Client.new(:app_id=>"yourappidhere",
+<pre>@bbpc = BBPush::Client.new(:app_id=>"yourappidhere",
                            :password=>"yourpasswordhere", 
-                           :push_server_url=>"https://cp123.pushapi.na.blackberry.com/mss/PD_pushRequest")
-</pre>
+                           :push_server_url=>"https://cp123.pushapi.na.blackberry.com/mss/PD_pushRequest")</pre>
 
 *Send push notifications*
 
 * First parameter is an array of one or multiple device PINs as strings. It can also be an array containing only "push_all".
 * Second parameter is a string containing the plain text message you would like to send to the device(s).
 * Third parameter is an integer is the maximum number of minutes the notifications should be delivered within (5 is a good value!).
-<pre>
-@bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)
+<pre>@bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)
 @bbpc.send_notification(["12345678", "23456789", "34567890"], "Hello to 3 different devices!", 5)
-@bbpc.send_notification(["push_all"], "Hello to all devices with the app installed!", 5)
-</pre>
+@bbpc.send_notification(["push_all"], "Hello to all devices with the app installed!", 5)</pre>
 
 That's it! As long as your Blackberry client-side app is programmed to properly handle push notifications, the device(s) will receive it! If you would like to take a look at the PAP response provided by the Blackberry servers you can assign "BBPush::Client.send_notification" to a variable and the response will be stored like so:
 
-<pre>
-response = @bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)
-</pre>
+<pre>response = @bbpc.send_notification(["12345678"], "Hello to the device with PIN 12345678!", 5)</pre>
 
 If you then inspect "response" you should see a PAP response similar to this:
-<pre>
-&lt;?xml version=&quot;1.0&quot;?&gt;
+<pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;!DOCTYPE pap PUBLIC &quot;-//WAPFORUM//DTD PAP 2.1//EN&quot; &quot;http://www.openmobilealliance.org/tech/DTD/pap_2.1.dtd&quot;&gt;
 &lt;pap&gt;
 	&lt;push-response push-id=&quot;2237803423&quot; sender-address=&quot;http://cp123.pushapi.na.blackberry.com/mss/PD_pushRequest&quot; sender-name=&quot;RIM Push-Data Service&quot; reply-time=&quot;2010-12-14T21:32:46Z&quot;&gt;
 		&lt;response-result code=&quot;1001&quot; desc=&quot;The request has been accepted for processing.&quot;&gt;&lt;/response-result&gt;
 	&lt;/push-response&gt;
-&lt;/pap&gt;
-</pre>
+&lt;/pap&gt;</pre>
 
 Getting a 1001 Response Result Code indicates that everything is working perfectly on the server-side. If you still don't get the notifications, the problem resides on your client-side app!
 
