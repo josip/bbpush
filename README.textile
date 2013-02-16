@@ -1,10 +1,10 @@
 h1. BBPush
 
-"http://github.com/nbrochu/bbpush":http://github.com/nbrochu/bbpush
-
 h2. Summary
 
 A simple server-side Blackberry push notification client that works with BIS applications.
+
+Note: this is a fork of the original repository and it's using Faraday instead of Net::HTTP for better performance when used together with like things like sinatra-synchrony.
 
 h2. Description
 
